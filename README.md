@@ -1,68 +1,51 @@
-# CodeIgniter 4 Application Starter
+## Daftar Bugs yang Harus Diperbaiki (35 Bugs)
 
-## What is CodeIgniter?
+1. **Routes.php**: Missing auth filter pada refresh endpoint
+2. **Routes.php**: Inconsistent API prefix
+3. **Routes.php**: Wrong filter name untuk tasks
+4. **Database.php**: Database might not exist
+5. **Database.php**: Missing test database config
+6. **AuthController**: No input validation pada register
+7. **AuthController**: Password tidak di-hash
+8. **AuthController**: Mengembalikan password dalam response
+9. **AuthController**: No input validation pada login
+10. **AuthController**: Plain text password comparison
+11. **AuthController**: Missing refresh implementation
+12. **UserController**: No pagination
+13. **UserController**: No ID validation
+14. **UserController**: Returning sensitive data
+15. **UserController**: No authorization check pada update
+16. **UserController**: No input validation pada update
+17. **UserController**: No authorization check pada delete
+18. **ProjectController**: Shows all projects instead of user's only
+19. **ProjectController**: No input validation pada create
+20. **ProjectController**: Not setting user_id from JWT
+21. **ProjectController**: No ownership check pada show
+22. **ProjectController**: No ownership check pada update
+23. **ProjectController**: No ownership check pada delete
+24. **TaskController**: No filtering by project/user
+25. **TaskController**: No validation for required fields
+26. **TaskController**: Not validating project ownership
+27. **TaskController**: No access control pada show
+28. **TaskController**: No validation for status updates
+29. **UserModel**: No validation rules
+30. **UserModel**: No timestamp handling
+31. **UserModel**: Weak password hashing (MD5)
+32. **ProjectModel**: No validation rules
+33. **TaskModel**: No validation rules
+34. **JWTAuthFilter**: Wrong token format handling
+35. **JWTAuthFilter**: Not setting user data in request
+36. **JWTLibrary**: Hardcoded secret key
+37. **JWTLibrary**: No proper token validation
+38. **JWTLibrary**: No signature verification
+39. **Database**: Missing foreign key constraint pada projects
+40. **Database**: Missing foreign key constraint pada tasks
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## Instruksi Setup
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
-
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
-
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
-
-## Installation & updates
-
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
-
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
-
-## Setup
-
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
-
-## Important Change with index.php
-
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
-
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
-
-**Please** read the user guide for a better explanation of how CI4 works!
-
-## Repository Management
-
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
-
-## Server Requirements
-
-PHP version 7.4 or higher is required, with the following extensions installed:
-
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
-
-> [!WARNING]
-> The end of life date for PHP 7.4 was November 28, 2022.
-> The end of life date for PHP 8.0 was November 26, 2023.
-> If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> The end of life date for PHP 8.1 will be November 25, 2024.
-
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+1. Install CodeIgniter 4
+2. Copy semua file ke folder yang sesuai
+3. Buat database 'task_management'
+4. Jalankan migration SQL
+5. Configure database di app/Config/Database.php
+6. Test API menggunakan Postman
