@@ -20,6 +20,10 @@ class UserController extends ResourceController
     public function show($id = null)
     {
         // Bug #13: No input validation for ID
+        if (!is_numeric($id) || $id <= 0) {
+        return $this->failValidationErrors(['id' => 'Invalid user ID']);
+        }
+
         $user = $this->model->find($id);
 
         if (!$user) {
@@ -27,6 +31,8 @@ class UserController extends ResourceController
         }
 
         // Bug #14: Returning sensitive data
+        unset($user['password'], $user['auth_token'], $user['refresh_token']);
+
         return $this->respond($user);
     }
 
