@@ -1,5 +1,8 @@
 # UAS Pengembangan Web – Debug REST API CI4
 
+Nama  : Ramadhan Maulana
+NIM   : 231080200138
+
 ## Tugas:
 - Perbaiki minimal 5 bug dari aplikasi
 - Catat bug dan solusinya dalam tabel laporan
