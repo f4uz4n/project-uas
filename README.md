@@ -49,3 +49,12 @@
 4. Jalankan migration SQL
 5. Configure database di app/Config/Database.php
 6. Test API menggunakan Postman
+
+## cara push jawaban
+
+1. mhs melakukan clone pada pada git tersebut dengan perintah : git clone https://github.com/f4uz4n/project-uas.git
+2. mhs membuat branch baru dengan cara : git branch nim
+3. setelah itu pindah ke branch yang sudah dibuat mhs dengan cara : git checkout nim
+4. mahasiswa mengerjakan, setelah mengerjakan lakukan : git add . (untuk semua) atau git add nama_folder untuk file tertentu
+5. lakukan commit dengan cara : git commit -m "isi pesan"
+6. lakukan git push : git push --set-upstream origin nim
