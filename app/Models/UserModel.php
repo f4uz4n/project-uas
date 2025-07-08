@@ -11,20 +11,14 @@ class UserModel extends Model
     protected $allowedFields = ['name', 'email', 'password'];
 
     // Bug #29: No validation rules
-    protected $validationRules = [];
+    protected $validationRules = [
+        'name'     => 'required|min_length[3]',
+        'email'    => 'required|valid_email|is_unique[users.email]',
+        'password' => 'required|min_length[6]'
+    ];
 
     // Bug #30: No date handling
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
 
-    protected $beforeInsert = ['hashPassword'];
-    protected $beforeUpdate = ['hashPassword'];
-
-    protected function hashPassword(array $data)
-    {
-        if (isset($data['data']['password'])) {
-            // Bug #31: Weak password hashing
-            $data['data']['password'] = md5($data['data']['password']);
-        }
-        return $data;
-    }
+    // Bug #31: Weak password hashing (MD5)
 }
