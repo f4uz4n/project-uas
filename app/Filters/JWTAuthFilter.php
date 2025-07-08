@@ -6,6 +6,7 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Filters\FilterInterface;
 use App\Libraries\JWTLibrary;
+use Exception;
 
 class JWTAuthFilter implements FilterInterface
 {
@@ -20,13 +21,17 @@ class JWTAuthFilter implements FilterInterface
         }
 
         // Bug #34: Wrong token format handling
-        $token = str_replace('Bearer ', '', $header);
+        $token = $header->getValue();
+        if (strpos($token, 'Bearer ') === 0) {
+            $token = substr($token, 7); // hapus prefix "Bearer "
+        }
 
         $jwt = new JWTLibrary();
 
         try {
             $decoded = $jwt->decode($token);
             // Bug #35: Not setting user data in request
+            $request->user = $decoded;
         } catch (Exception $e) {
             return service('response')
                 ->setStatusCode(401)
