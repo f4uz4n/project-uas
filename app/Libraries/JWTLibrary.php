@@ -2,9 +2,17 @@
 
 namespace App\Libraries;
 
+use Exception;
+
 class JWTLibrary
 {
-    private $key = 'your-secret-key'; // Bug #36: Hardcoded secret key
+    private $key;
+
+    public function __construct()
+    {
+        // Bug #36: Hardcoded secret key
+        $this->key = getenv('JWT_SECRET') ?: 'fallback-secret';
+    }
 
     public function encode($payload)
     {
@@ -29,10 +37,24 @@ class JWTLibrary
             throw new Exception('Invalid token format');
         }
 
-        $header = json_decode(base64_decode($parts[0]), true);
-        $payload = json_decode(base64_decode($parts[1]), true);
+        list($base64Header, $base64Payload, $base64Signature) = $parts;
+
+        $header = json_decode(base64_decode(strtr($base64Header, '-_', '+/')), true);
+        $payload = json_decode(base64_decode(strtr($base64Payload, '-_', '+/')), true);
 
         // Bug #38: No signature verification
+        $expectedSignature = hash_hmac(
+            'sha256',
+            $base64Header . '.' . $base64Payload,
+            $this->key,
+            true
+        );
+        $expectedBase64Signature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($expectedSignature));
+
+        if (!hash_equals($expectedBase64Signature, $base64Signature)) {
+            throw new Exception('Invalid token signature');
+        }
+
         return $payload;
     }
 }

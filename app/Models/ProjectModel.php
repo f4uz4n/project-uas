@@ -15,5 +15,10 @@ class ProjectModel extends Model
     protected $updatedField = 'updated_at';
 
     // Bug #32: No validation rules
-    protected $validationRules = [];
+    protected $validationRules = [
+        'name'        => 'required|min_length[3]',
+        'description' => 'permit_empty',
+        'user_id'     => 'required|is_natural_no_zero',
+        'status'      => 'required|in_list[active,completed,on_hold]',
+    ];
 }

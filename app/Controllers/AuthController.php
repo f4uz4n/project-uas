@@ -22,22 +22,35 @@ class AuthController extends ResourceController
         $data = $this->request->getPost();
 
         // Bug #6: No input validation
+        $rules = [
+            'name'     => 'required',
+            'email'    => 'required|valid_email|is_unique[users.email]',
+            'password' => 'required|min_length[6]',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->failValidationErrors($this->validator->getErrors());
+        }
+
         $userModel = new UserModel();
 
         // Bug #7: Password not hashed
         $userData = [
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password']
+            'name'     => $data['name'],
+            'email'    => $data['email'],
+            'password' => password_hash($data['password'], PASSWORD_DEFAULT),
         ];
 
         $userId = $userModel->insert($userData);
 
         if ($userId) {
+            // Bug #8: Returning password in response
+            unset($userData['password']); // password tidak dikembalikan ke client
+
             return $this->respond([
-                'status' => 'success',
+                'status'  => 'success',
                 'message' => 'User registered successfully',
-                'data' => $userData // Bug #8: Returning password in response
+                'data'    => $userData
             ]);
         }
 
@@ -46,27 +59,38 @@ class AuthController extends ResourceController
 
     public function login()
     {
-        $email = $this->request->getPost('email');
+        $email    = $this->request->getPost('email');
         $password = $this->request->getPost('password');
 
         // Bug #9: No input validation
+        $rules = [
+            'email'    => 'required|valid_email',
+            'password' => 'required',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->failValidationErrors($this->validator->getErrors());
+        }
+
         $userModel = new UserModel();
         $user = $userModel->where('email', $email)->first();
 
         // Bug #10: Plain text password comparison
-        if ($user && $user['password'] === $password) {
+        if ($user && password_verify($password, $user['password'])) {
             $payload = [
                 'user_id' => $user['id'],
-                'email' => $user['email'],
-                'exp' => time() + 3600
+                'email'   => $user['email'],
+                'exp'     => time() + 3600
             ];
 
             $token = $this->jwt->encode($payload);
 
+            unset($user['password']); // password tidak dikirim balik
+
             return $this->respond([
                 'status' => 'success',
-                'token' => $token,
-                'user' => $user
+                'token'  => $token,
+                'user'   => $user
             ]);
         }
 
@@ -76,6 +100,6 @@ class AuthController extends ResourceController
     public function refresh()
     {
         // Bug #11: Missing implementation
-        return $this->respond(['message' => 'Not implemented']);
+        return $this->respond(['message' => 'Not implemented yet']);
     }
 }

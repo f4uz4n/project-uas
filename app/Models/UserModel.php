@@ -14,16 +14,16 @@ class UserModel extends Model
     protected $validationRules = [];
 
     // Bug #30: No date handling
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
 
-    protected $beforeInsert = ['hashPassword'];
-    protected $beforeUpdate = ['hashPassword'];
+    protected $beforeInsert = [];
+    protected $beforeUpdate = [];
 
     protected function hashPassword(array $data)
     {
         if (isset($data['data']['password'])) {
             // Bug #31: Weak password hashing
-            $data['data']['password'] = md5($data['data']['password']);
+            $data['data']['password'] = password_hash($data['data']['password'], PASSWORD_DEFAULT);
         }
         return $data;
     }

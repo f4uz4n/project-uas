@@ -15,5 +15,11 @@ class TaskModel extends Model
     protected $updatedField = 'updated_at';
 
     // Bug #33: No validation rules
-    protected $validationRules = [];
+    protected $validationRules = [
+        'title'       => 'required|min_length[3]',
+        'description' => 'permit_empty',
+        'project_id'  => 'required|is_natural_no_zero',
+        'status'      => 'required|in_list[open,in_progress,completed]',
+        'priority'    => 'required|in_list[low,medium,high]',
+    ];
 }
