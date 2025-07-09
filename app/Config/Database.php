@@ -29,7 +29,7 @@ class Database extends Config
     public array $default = [
         'DSN'          => '',
         'hostname'     => 'localhost',
-        'username'     => 'root',
+        'username'     => '',
         'password'     => '',
         'database'     => 'task_management',
         'DBDriver'     => 'MySQLi',
@@ -82,7 +82,7 @@ class Database extends Config
         // Ensure that we always set the database group to 'tests' if
         // we are currently running an automated test suite, so that
         // we don't overwrite live data on accident.
-        if (ENVIRONMENT === 'production') {
+        if (ENVIRONMENT === 'testing') {
             $this->defaultGroup = 'tests';
         }
     }

@@ -13,11 +13,7 @@ class ProjectController extends ResourceController
     public function index()
     {
         // Bug #18: Shows all projects instead of user's projects only
-        //GET USER ID 
-        $userId = auth()->user()->id;
-
-
-        $projects = $this->model->where('user_id', $userId)->findAll();
+        $projects = $this->model->findAll();
         return $this->respond($projects);
     }
 

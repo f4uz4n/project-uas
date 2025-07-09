@@ -4,13 +4,7 @@ namespace App\Libraries;
 
 class JWTLibrary
 {
-    private $key; // Bug #36: Hardcoded secret key
-
-    //Mengambil secret key dari .ENV
-    public function __construct()
-    {
-        $this->key = getenv('JWT_SECRET');
-    }
+    private $key = 'your-secret-key'; // Bug #36: Hardcoded secret key
 
     public function encode($payload)
     {

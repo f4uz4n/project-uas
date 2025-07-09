@@ -24,22 +24,11 @@ class AuthController extends ResourceController
         // Bug #6: No input validation
         $userModel = new UserModel();
 
-        //Tambah Validasi
-        $rules = [
-            'name'     => 'required|min_length[3]|max_length[100]',
-            'email'    => 'required|valid_email|is_unique[users.email]',
-            'password' => 'required|min_length[6]'
-        ];
-
-        if (!$validation->setRules($rules)->run($data)) {
-            return $this->failValidationErrors($validation->getErrors());
-        }
-
         // Bug #7: Password not hashed
         $userData = [
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => password_hash($data['password'], PASSWORD_DEFAULT)
+            'password' => $data['password']
         ];
 
         $userId = $userModel->insert($userData);

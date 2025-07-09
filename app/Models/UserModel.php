@@ -6,25 +6,28 @@ use CodeIgniter\Model;
 
 class UserModel extends Model
 {
-    protected $table = 'users';
+    protected $table      = 'users';
     protected $primaryKey = 'id';
+
+    protected $useAutoIncrement = true;
+    protected $returnType       = 'array';
+    protected $useSoftDeletes   = false;
+
     protected $allowedFields = ['name', 'email', 'password'];
 
-    // Bug #29: No validation rules
-    protected $validationRules = [];
-
-    // Bug #30: No date handling
+    // ✅ FIXED: Timestamp handling
     protected $useTimestamps = true;
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
 
-    protected $beforeInsert = ['hashPassword'];
-    protected $beforeUpdate = ['hashPassword'];
+    // ✅ FIXED: Validation rules
+    protected $validationRules = [
+        'name'     => 'required|min_length[3]',
+        'email'    => 'required|valid_email|is_unique[users.email]',
+        'password' => 'required|min_length[6]',
+    ];
 
-    protected function hashPassword(array $data)
-    {
-        if (isset($data['data']['password'])) {
-            // Bug #31: Weak password hashing
-            $data['data']['password'] = password_hash($data['data']['password']);
-        }
-        return $data;
-    }
+    protected $validationMessages = [];
+
+    protected $skipValidation = false;
 }
