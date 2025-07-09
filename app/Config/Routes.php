@@ -10,11 +10,16 @@ $routes->get('/', 'Home::index');
 $routes->group('api/auth', function ($routes) {
     $routes->post('login', 'AuthController::login');
     $routes->post('register', 'AuthController::register');
-    $routes->post('refresh', 'AuthController::refresh', ['filter' => 'jwt']); // Bug #1: Missing authentication filter
+    // $routes->post('refresh', 'AuthController::refresh');  Bug #1: Missing authentication filter
+    $routes->post('refresh', 'AuthController::refresh', ['filter' => 'jwt']); // menambahkan filter agar aman kalau ngga orang bisa akses tanpa otentikasi
+
 });
 
 // User routes - Bug #2: Missing API prefix consistency
-$routes->group('api/users', ['filter' => 'jwt'], function ($routes) {
+// YANG SALAH
+// $routes->group('users', ['filter' => 'jwt'], function ($routes) { 
+// YANG BENAR
+$routes->group('api/users', ['filter' => 'jwt'], function ($routes) { // di route ini ga ada api/, sedangkan di route lain ada jadi disini saya tambahkan ('api/users')
     $routes->get('/', 'UserController::index');
     $routes->get('(:num)', 'UserController::show/$1');
     $routes->put('(:num)', 'UserController::update/$1');
@@ -31,7 +36,10 @@ $routes->group('api/projects', ['filter' => 'jwt'], function ($routes) {
 });
 
 // Task routes - Bug #3: Wrong filter name
-$routes->group('api/tasks', ['filter' => 'jwt'], function ($routes) {
+// YANG SALAH
+// $routes->group('api/tasks', ['filter' => 'auth'], function ($routes) {
+$routes->group('api/users', ['filter' => 'jwt'], function ($routes) { // ini salah bukan auth seharusnya jwt seperti yang lainnya
+
     $routes->get('/', 'TaskController::index');
     $routes->post('/', 'TaskController::create');
     $routes->get('(:num)', 'TaskController::show/$1');
