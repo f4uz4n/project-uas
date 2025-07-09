@@ -19,38 +19,48 @@ class AuthController extends ResourceController
 
     public function register()
     {
-        $data = $this->request->getPost();
+        // $data = $this->request->getPost(); Tidak ada validasi input saat register, saya ubah dan dengan tambahkan validasi
+        if (!isset($data['name'], $data['email'], $data['password'])) {
+        return $this->failValidationErrors('Name, email, and password are required');
+    }
+
 
         // Bug #6: No input validation
         $userModel = new UserModel();
-
-        //Tambah Validasi
-        $rules = [
-            'name'     => 'required|min_length[3]|max_length[100]',
-            'email'    => 'required|valid_email|is_unique[users.email]',
-            'password' => 'required|min_length[6]'
-        ];
-
-        if (!$validation->setRules($rules)->run($data)) {
-            return $this->failValidationErrors($validation->getErrors());
-        }
 
         // Bug #7: Password not hashed
         $userData = [
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => password_hash($data['password'], PASSWORD_DEFAULT)
+            // 'password' => $data['password'] Password Tidak dihash, jadi saya tambahkan code seperti dibawah ini 
+            'password' => password_hash($data['password'], PASSWORD_BCRYPT)
+
         ];
 
+        // $userId = $userModel->insert($userData);
+
+        // if ($userId) {
+        //     return $this->respond([
+        //         'status' => 'success',
+        //         'message' => 'User registered successfully',
+        //         'data' => $userData // Bug #8: Returning password in response #8 Mengembalikan Password di respon tidak aman 
+        //         unset($userData['password']);
+
+        //     ]);
+        // }
         $userId = $userModel->insert($userData);
 
         if ($userId) {
+            // Hapus password sebelum dikembalikan
+            unset($userData['password']); // ganti jadi ini
+
             return $this->respond([
                 'status' => 'success',
                 'message' => 'User registered successfully',
-                'data' => $userData // Bug #8: Returning password in response
+                'data' => $userData
             ]);
         }
+
 
         return $this->failServerError('Registration failed');
     }
@@ -63,9 +73,14 @@ class AuthController extends ResourceController
         // Bug #9: No input validation
         $userModel = new UserModel();
         $user = $userModel->where('email', $email)->first();
+        if (!$email || !$password) {
+        return $this->failValidationErrors('Email and password are required'); //menambahkan validasi saat input
+    }
 
-        // Bug #10: Plain text password comparison
-        if ($user && $user['password'] === $password) {
+
+        // Bug #10: Plain text password comparison 
+        // if ($user && $user['password'] === $password) { //ini membandingkan secara langsung sementara di database itu di hash
+        if ($user && password_verify($password, $user['password'])) { // ubah jadi ini yaitu ditambahkan password_verify
             $payload = [
                 'user_id' => $user['id'],
                 'email' => $user['email'],
