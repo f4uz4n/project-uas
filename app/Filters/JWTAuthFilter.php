@@ -20,7 +20,17 @@ class JWTAuthFilter implements FilterInterface
         }
 
         // Bug #34: Wrong token format handling
+        // Salah:
         $token = str_replace('Bearer ', '', $header);
+
+        // Benar:
+        $authHeader = $header->getValue();
+        if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            return service('response')
+                ->setStatusCode(401)
+                ->setJSON(['error' => 'Invalid Authorization header format']);
+        }
+        $token = $matches[1];
 
         $jwt = new JWTLibrary();
 
@@ -37,5 +47,9 @@ class JWTAuthFilter implements FilterInterface
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
         // Not implemented
+        // Salah:
+        // (tidak ada baris yang menyimpan user ke request) // Bug #35
+        // Benar:
+        $request->user = $decoded;
     }
 }

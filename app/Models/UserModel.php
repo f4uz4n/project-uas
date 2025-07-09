@@ -14,7 +14,7 @@ class UserModel extends Model
     protected $validationRules = [];
 
     // Bug #30: No date handling
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
 
     protected $beforeInsert = ['hashPassword'];
     protected $beforeUpdate = ['hashPassword'];
@@ -23,7 +23,7 @@ class UserModel extends Model
     {
         if (isset($data['data']['password'])) {
             // Bug #31: Weak password hashing
-            $data['data']['password'] = password_hash($data['data']['password']);
+            $data['data']['password'] = md5($data['data']['password']);
         }
         return $data;
     }
