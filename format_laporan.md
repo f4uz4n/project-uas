@@ -4,29 +4,34 @@
 - Perbaiki minimal 5 bug dari aplikasi
 - Catat bug dan solusinya dalam tabel laporan
 
-### Laporan Bug
-| No | File                     | Baris | Bug                           | Solusi                          |
-|----|--------------------------|-------|-------------------------------|----------------------------------|
-| 1  | app/Controllers/Auth.php | 22    | Salah nama helper             | Tambah `helper('jwt')`            |
-| 2  | .env                     | 7     | `JWT_SECRET` kosong           | Tambahkan `JWT_SECRET=abc123`     |
-| 3  | app/Controllers/Auth.php | 31    | Tidak ada hash password       | Tambahkan Hash Password           |
-| 4  | app/Config/Database.php  | 32    | Tidak ada Username pada DB    | Tambahkan Username DB             |
-| 5  | app/Config/Database.php  | 85    | Missing test database config  | Tambahkan DB config dari .env     |
-| 6  | app/Models/UserModel.php | 17    | No date handling              | Tambahkan date timestamp          |
-| 7  | app/Models/UserModel.php | 26    | Weak password hashing         | Perubahan metode hash             |
-| 8  | Controllers/ProjectController.php | 17 | Shows all projects instead of user's only | Tambahkan variabel mengambil user id |
-| 9  | app/Config/Routes.php    | 34    | Wrong filter name untuk tasks | Perubahan filter name menjadi jwt |
-| 10 | app/Config/Routes.php    | 17    | Inconsistent API prefix       | Penambahan Api/ pada routes       |
-| 11 | app/Config/Routes.php    | 13    | Missing auth filter pada refresh endpoint | Penambahan filter     |
-| 12 | app/Controllers/AuthController.php | 28 | No input validation pada register | Penambahan validasi    |
-| 13 | app/Library/JWTLibrary.php | 7 | Hardcoded secret key | Penambahan keamanan agar mengambil dari .env |
-| 14 | app/Controllers/UserController.php | 23 | No input validation for ID | Penambahan validasi ID|
-| 15 | app/Controllers/UserController.php | 34 | Returning sensitive data | Hapus data sensitif dari output |
+---
 
+### ✅ Laporan Bug
 
+| No | File                          | Baris | Bug                                                       | Solusi                                                                 |
+|----|-------------------------------|-------|------------------------------------------------------------|------------------------------------------------------------------------|
+| 1  | app/Controllers/AuthController.php | 17    | Class `JWTLibrary` error                                   | Buat file `app/Libraries/JWTLibrary.php` dan pastikan namespace sesuai |
+| 2  | app/Controllers/AuthController.php | 33    | Tidak ada validasi input saat register                     | Tambahkan validasi menggunakan `$this->validate()`                     |
+| 3  | app/Controllers/AuthController.php | 40    | Password tidak di-hash                                     | Ubah ke `password_hash($pass, PASSWORD_DEFAULT)`                       |
+| 4  | app/Controllers/AuthController.php | 45    | Password dikirim kembali dalam response                    | Gunakan `unset($userData['password'])` sebelum `respond()`             |
+| 5  | app/Controllers/AuthController.php | 62    | Perbandingan password masih plain text                     | Ganti ke `password_verify($password, $user['password'])`               |
+| 6  | app/Models/UserModel.php      | -     | Hashing menggunakan MD5 yang lemah                         | Ganti ke `password_hash` di Controller, hapus fungsi beforeInsert      |
+| 7  | app/Models/UserModel.php      | -     | Tidak ada `validationRules` dan `useTimestamps`            | Tambahkan rules dan aktifkan `useTimestamps = true`                    |
+| 8  | app/Config/Routes.php         | -     | Filter `auth` salah untuk tasks                            | Ubah ke `jwt` agar sesuai filter yang ada                             |
+| 9  | .env                          | -     | JWT_SECRET tidak disetel                                   | Tambahkan `JWT_SECRET=your_secret_key`                                |
+| 10 | Postman Header                | -     | Body tidak dikenali karena tidak pakai `Content-Type` JSON | Tambahkan Header `Content-Type: application/json` di Postman          |
 
+---
 
-## Uji dengan Postman:
-- POST /login
-- POST /register
-- GET /users (token diperlukan)
+## 🔁 Uji API dengan Postman:
+
+### ✅ Register
+- **Method**: POST  
+- **Endpoint**: `http://localhost:8080/api/auth/register`  
+- **Body (JSON)**:
+```json
+{
+  "name": "Novan",
+  "email": "novan19@gmail.com",
+  "password": "111novan"
+}
