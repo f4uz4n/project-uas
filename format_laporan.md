@@ -4,34 +4,22 @@
 - Perbaiki minimal 5 bug dari aplikasi
 - Catat bug dan solusinya dalam tabel laporan
 
----
+### Laporan Bug
+| No | File                     | Baris | Bug                        | Solusi                          |
+|----|--------------------------|-------|-----------------------------|----------------------------------|
+| 1 | app/Controller/routes.php| 10    | Missing auth filter pada refresh endpoint|  tambahkan "$routes->post('auth/refresh', 'AuthController::refresh', ['filter' => 'auth']);"                                |
+| 2  |app/Controller/routes.php| 17     | Inconsistent API prefix | Tambahkan semua endpoint API menggunakan prefix yang konsisten, misal api/   |
+| 3 |app/Controller/routes.php| 34     |Wrong filter name untuk tasks|Pastikan filter yang digunakan pada route tasks sesuai dengan nama filter yang ada,'auth'|
+| 4 |database.php| 78     |Database might not exist|Tambahkan  parent::__construct();
+    if (!@mysqli_connect($this->default['hostname'], $this->default['username'], $this->default['password'], $this->default['database']))|
+| 5 |adatabase.php| 56-76     |Missing test database config|tambahkan konfigurasi untuk testing|
+| 6 |AuthController.php| 34     |No input validation pada register|Tambahkan validasi input pada method register:|
+| 7 |aAuthController.php| 46    | Password tidak di-hash|tambahkan 'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),|
+| 8 |aAuthController.php| 56    | Mengembalikan password dalam response|tambahkan  unset($userData['password']);|
+| 9 |aAuthController.php| 73    | No input validation pada login|tambahkan  $validation = \Config\Services::validation();|
+| 10 |aAuthController.php| 86    | Plain text password comparison|tambahkan  if ($user && password_verify($password, $user['password']))|
 
-### ✅ Laporan Bug
-
-| No | File                          | Baris | Bug                                                       | Solusi                                                                 |
-|----|-------------------------------|-------|------------------------------------------------------------|------------------------------------------------------------------------|
-| 1  | app/Controllers/AuthController.php | 17    | Class `JWTLibrary` error                                   | Buat file `app/Libraries/JWTLibrary.php` dan pastikan namespace sesuai |
-| 2  | app/Controllers/AuthController.php | 33    | Tidak ada validasi input saat register                     | Tambahkan validasi menggunakan `$this->validate()`                     |
-| 3  | app/Controllers/AuthController.php | 40    | Password tidak di-hash                                     | Ubah ke `password_hash($pass, PASSWORD_DEFAULT)`                       |
-| 4  | app/Controllers/AuthController.php | 45    | Password dikirim kembali dalam response                    | Gunakan `unset($userData['password'])` sebelum `respond()`             |
-| 5  | app/Controllers/AuthController.php | 62    | Perbandingan password masih plain text                     | Ganti ke `password_verify($password, $user['password'])`               |
-| 6  | app/Models/UserModel.php      | -     | Hashing menggunakan MD5 yang lemah                         | Ganti ke `password_hash` di Controller, hapus fungsi beforeInsert      |
-| 7  | app/Models/UserModel.php      | -     | Tidak ada `validationRules` dan `useTimestamps`            | Tambahkan rules dan aktifkan `useTimestamps = true`                    |
-| 8  | app/Config/Routes.php         | -     | Filter `auth` salah untuk tasks                            | Ubah ke `jwt` agar sesuai filter yang ada                             |
-| 9  | .env                          | -     | JWT_SECRET tidak disetel                                   | Tambahkan `JWT_SECRET=your_secret_key`                                |
-| 10 | Postman Header                | -     | Body tidak dikenali karena tidak pakai `Content-Type` JSON | Tambahkan Header `Content-Type: application/json` di Postman          |
-
----
-
-## 🔁 Uji API dengan Postman:
-
-### ✅ Register
-- **Method**: POST  
-- **Endpoint**: `http://localhost:8080/api/auth/register`  
-- **Body (JSON)**:
-```json
-{
-  "name": "Novan",
-  "email": "novan19@gmail.com",
-  "password": "111novan"
-}
+## Uji dengan Postman:
+- POST /login
+- POST /register
+- GET /users (token diperlukan)
